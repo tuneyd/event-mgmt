@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Edit Event{% endblock %}
+{% block content %}
+    <h1>Edit Event</h1>
+    <form id="editEventForm" method="post">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.title.label }}<br>
+            {{ form.title(size=32) }}<br>
+            {% for error in form.title.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.description.label }}<br>
+            {{ form.description(rows=10, cols=50) }}<br>
+            {% for error in form.description.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div>
+            <!-- Submit button with confirmation dialog -->
+            <button type="button" onclick="confirmSubmit()">Submit</button>
+        </div>
+    </form>
+
+    <script>
+        function confirmSubmit() {
+            if (confirm("Are you sure you want to submit this form?")) {
+                document.getElementById("editEventForm").submit();
+            }
+        }
+    </script>
+{% endblock %}

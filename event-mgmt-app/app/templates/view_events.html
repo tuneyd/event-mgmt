@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}View Events{% endblock %}
+{% block content %}
+    <h1>Events</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.id }}</td>
+                    <td>{{ event.title }}</td>
+                    <td>{{ event.description }}</td>
+                    <td>
+                        <form action="{{ url_for('edit_event', event_id=event.id) }}" method="post">
+                            <button type="submit">Edit</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_event', event_id=event.id) }}" method="post" onclick="return confirmAction('delete')">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        <p><a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">Back to Admin Dashboard</a></p>
+    </div>
+
+    <script>
+        function confirmAction(action) {
+            return confirm("Are you sure you want to " + action + " this event?");
+        }
+    </script>
+    
+{% endblock %}
+

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Data Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
+</head>
+<body>
+
+<div>
+    <h2>Event Registrations Overview</h2>
+    <canvas id="eventsOverviewChart"></canvas> <!-- Canvas where the chart will be rendered -->
+    <button onclick="downloadJson()">Download JSON Data</button> <!-- Button to download JSON -->
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch the event data from your microservice
+    fetch('http://localhost:5001/api/report/events-overview')
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            // Process data to get labels and registration counts
+            const labels = data.map(event => event.category + ' - ' + event.date);
+            const registrations = data.map(event => event.registrations);
+
+            // Render the chart with the processed data
+            renderChart(labels, registrations);
+        })
+        .catch(error => console.error('Error fetching event data:', error));
+});
+
+// Function to render the chart
+function renderChart(labels, registrations) {
+    const ctx = document.getElementById('eventsOverviewChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'bar', // Chart type
+        data: {
+            labels: labels, // Categories and dates as labels
+            datasets: [{
+                label: 'Registrations',
+                data: registrations, // Registration counts
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true // Start the y-axis at 0
+                }
+            }
+        }
+    });
+}
+
+// Function to download JSON data
+function downloadJson() {
+    fetch('http://localhost:5001/api/report/events-overview')
+        .then(response => response.json())
+        .then(data => {
+            const a = document.createElement('a');
+            const file = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            a.href = URL.createObjectURL(file);
+            a.download = 'events-data.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        })
+        .catch(error => console.error('Error downloading JSON data:', error));
+}
+</script>
+
+</body>
+</html>
